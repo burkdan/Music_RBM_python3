@@ -31,7 +31,8 @@ def main(num_epochs):
     gvs = [(tf.clip_by_value(grad, -10., 10.), var) for grad, var in gvs] #We use gradient clipping to prevent gradients from blowing up during training
     updt = opt_func.apply_gradients(gvs)#The update step involves applying the clipped gradients to the model parameters
 
-    songs = midi_manipulation.get_songs('Pop_Music_Midi') #Load the songs 
+    # songs = midi_manipulation.get_songs('Pop_Music_Midi') #Load the songs 
+    songs = midi_manipulation.get_songs('Kirby_Music_Midi')
 
     saver = tf.train.Saver(tvars) #We use this saver object to restore the weights of the model and save the weights every few epochs
     with tf.Session() as sess:
@@ -40,7 +41,7 @@ def main(num_epochs):
         saver.restore(sess, saved_weights_path) #Here we load the initial weights of the model that we created with weight_initializations.py
 
         #We run through all of the songs n_epoch times
-        print "starting"
+        print("starting")
         for epoch in range(num_epochs):
             costs = []
             start = time.time()
@@ -51,7 +52,7 @@ def main(num_epochs):
                     _, C = sess.run([updt, cost], feed_dict={x: tr_x, lr: alpha}) 
                     costs.append(C) 
             #Print the progress at epoch
-            print "epoch: {} cost: {} time: {}".format(epoch, np.mean(costs), time.time()-start)
+            print("epoch: {} cost: {} time: {}".format(epoch, np.mean(costs), time.time()-start))
             print
             #Here we save the weights of the model every few epochs
             if (epoch + 1) % epochs_to_save == 0: 

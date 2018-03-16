@@ -71,7 +71,8 @@ def rnnrbm():
         u_t  = (tf.tanh(bu + tf.matmul(x_out, Wvu) + tf.matmul(u_tm1, Wuu)))
 
         #Add the new output to the musical piece
-        music = tf.concat(0, [music, x_out])
+        # music = tf.concat(0, [music, x_out])  CHANGE
+        music = tf.concat([music, x_out], 0)
         return count+1, k, u_t, x_out, x, music
 
     def generate(num, x=x, size_bt=size_bt, u0=u0, n_visible=n_visible, prime_length=100):
@@ -89,11 +90,44 @@ def rnnrbm():
 
         """
         Uarr = tf.scan(rnn_recurrence, x, initializer=u0)
-        U = Uarr[np.floor(prime_length/midi_manipulation.num_timesteps), :, :]
-        [_, _, _, _, _, music] = control_flow_ops.While(lambda count, num_iter, *args: count < num_iter,
-                                                         generate_recurrence, [tf.constant(1, tf.int32), tf.constant(num), U,
-                                                         tf.zeros([1, n_visible], tf.float32), x, 
-                                                         tf.zeros([1, n_visible],  tf.float32)])
+
+
+        # U = Uarr[np.floor(prime_length/midi_manipulation.num_timesteps), :, :]
+        U = Uarr[int(np.floor(prime_length / midi_manipulation.num_timesteps)), :, :]
+        # [_, _, _, _, _, music] = control_flow_ops.While(lambda count, num_iter, *args: count < num_iter,
+        #                                                  generate_recurrence, [tf.constant(1, tf.int32), tf.constant(num), U,
+        #                                                  tf.zeros([1, n_visible], tf.float32), x,
+        #                                                 tf.zeros([1, n_visible],  tf.float32)])
+
+        time_steps = tf.constant(1, tf.int32)
+        iterations = tf.constant(num)
+        u_t = tf.zeros([1, n_visible], tf.float32)
+        music = tf.zeros([1, n_visible], tf.float32)
+        loop_vars = [time_steps, iterations, U, u_t, x, music]
+
+        [_, _, _, _, _, music] = tf.while_loop(lambda count, num_iter, *args: count < num_iter, generate_recurrence,
+                                               loop_vars,
+                                               shape_invariants=[time_steps.get_shape(), iterations.get_shape(),
+                                                                 U.get_shape(), u_t.get_shape(),
+                                                                 x.get_shape(), tf.TensorShape([None, 780])])
+
+
+
+
+
+        # U = Uarr[int(np.floor(prime_length//midi_manipulation.num_timesteps)), :, :]
+        # ct = tf.constant(0)
+        # cond = lambda count, k, x: tf.less(count,k)
+        # # [_,_, x_sample] = tf.while_loop(cond, gibbs_step, [ct, tf.constant(k), x])
+        # # [_, _, x_sample] = tf.While(lambda count, num_iter, *args: count < num_iter,
+        #                                  # gibbs_step, [ct, tf.constant(k), x], 1, False)
+        # [_, _, _, _, _, music] = control_flow_ops.While(lambda count, num_iter, *args: count < num_iter,
+        #                                                  generate_recurrence, [tf.constant(1, tf.int32), tf.constant(num), U,
+        #                                                  tf.zeros([1, n_visible], tf.float32), x, 
+        #                                                  tf.zeros([1, n_visible],  tf.float32)])
+        # # [_, _, _, _, _, music] = tf.while_loop(cond, generate_recurrence, [tf.constant(1, tf.int32), tf.constant(num), U,
+        # #                                        tf.zeros([1, n_visible], tf.float32), x, 
+        # #                                        tf.zeros([1, n_visible],  tf.float32)])
         return music
 
     #Reshape our bias matrices to be the same size as the batch.
