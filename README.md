@@ -31,3 +31,5 @@ python rnn_rbm_generate.py <path_to_ckpt_file>
 will generate music by using the weights stored in the `path_to_ckpt_file`. You can use the provided file `parameter_checkpoints/pretrained.ckpt`, or you can use one of the ckpt files that you create. When you run `train_rnn_rbm.py`, the model creates a `epoch_<x>.ckpt` file in the parameter_checkpoints directory every couple of epochs. 
 
 
+Python3: MIDI library install command
+pip install git+https://github.com/vishnubob/python-midi@feature/python3
