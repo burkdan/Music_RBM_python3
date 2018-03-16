@@ -1,3 +1,6 @@
+Cloned from https://github.com/dshieble/Music_RNN_RBM
+Updated python2 commands to python3 and added MIDI install path and more files
+
 Note: this is described in detail here: http://danshiebler.com/2016-08-17-musical-tensorflow-part-two-the-rnn-rbm/
 
 
