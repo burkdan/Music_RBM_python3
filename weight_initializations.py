@@ -15,7 +15,7 @@ lr = 0.01 #The learning rate for the RBM
 
 def main():
 	#Load the Songs
-	songs = midi_manipulation.get_songs('Kirby_Music_Midi')
+	songs = midi_manipulation.get_songs('Mario_Music_Midi')
 
 
 	x  = tf.placeholder(tf.float32, [None, rnn_rbm.n_visible], name="x") #The placeholder variable that holds our data

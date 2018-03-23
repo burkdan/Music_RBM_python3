@@ -32,7 +32,7 @@ def main(num_epochs):
     updt = opt_func.apply_gradients(gvs)#The update step involves applying the clipped gradients to the model parameters
 
     # songs = midi_manipulation.get_songs('Pop_Music_Midi') #Load the songs 
-    songs = midi_manipulation.get_songs('Kirby_Music_Midi')
+    songs = midi_manipulation.get_songs('Mario_Music_Midi')
 
     saver = tf.train.Saver(tvars) #We use this saver object to restore the weights of the model and save the weights every few epochs
     with tf.Session() as sess:
